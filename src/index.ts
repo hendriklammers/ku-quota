@@ -5,6 +5,13 @@ import fs from 'fs'
 import path from 'path'
 import cheerio from 'cheerio'
 
+interface CacheData {
+  content: string
+  date: number
+}
+
+type Cache = CacheData | null
+
 const getPage = (pageUrl: string): Promise<string> =>
   new Promise((resolve, reject) => {
     https
@@ -27,13 +34,6 @@ const parseHtml = (html: string): Promise<string> =>
     resolve(result)
   })
 
-interface CacheData {
-  content: string
-  date: number
-}
-
-type Cache = CacheData | null
-
 const cacheFile = path.join(__dirname, 'cache')
 
 const writeCache = ({ content, date }: CacheData) =>
@@ -41,10 +41,10 @@ const writeCache = ({ content, date }: CacheData) =>
 
 const minToMillis = (min: number) => min * 60 * 1000
 
-const validateCacheDate = ({ date }: CacheData): boolean =>
-  Date.now() - date < minToMillis(5)
+const validateCacheDate = ({ date }: CacheData, expiration: number): boolean =>
+  expiration > 0 && Date.now() - date < minToMillis(5)
 
-const checkCache = (): Promise<Cache> =>
+const checkCache = (expiration: number): Promise<Cache> =>
   new Promise((resolve, reject) => {
     if (!fs.existsSync(cacheFile)) {
       resolve(null)
@@ -59,20 +59,24 @@ const checkCache = (): Promise<Cache> =>
           date: parseInt(matches[1], 10),
           content: matches[2],
         }
-        if (validateCacheDate(cache)) {
+        if (validateCacheDate(cache, expiration)) {
           resolve(cache)
-        } else {
-          resolve(null)
         }
-      } else {
         resolve(null)
       }
+      resolve(null)
     })
   })
 
+const cacheExpiration = (): number =>
+  process.argv.slice(2).reduce((_, arg) => {
+    const matches = /^(?:--cache=)(\d+)$/.exec(arg)
+    return matches ? parseInt(matches[1], 10) : 0
+  }, 0)
+
 const main = async () => {
   try {
-    const cached = await checkCache()
+    const cached = await checkCache(cacheExpiration())
     if (cached) {
       // Cache is available and hasn't expired
       process.stdout.write(`${cached.content}\n`)
