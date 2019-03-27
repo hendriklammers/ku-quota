@@ -1,7 +1,7 @@
 {
   "name": "ku-quota",
   "version": "1.0.0",
-  "description": "Daily internet usage",
+  "description": "Shows your remaining internet data for Kasetsart University network",
   "repository": "github:hendriklammers/ku-quota",
   "main": "dist/index.js",
   "types": "dist",
@@ -14,7 +14,8 @@
   },
   "keywords": [
     "node",
-    "typescript"
+    "typescript",
+    "Kasetsart University"
   ],
   "author": "Hendrik Lammers <lammers@gmail.com> (http://www.hendriklammers.com)",
   "license": "MIT",
