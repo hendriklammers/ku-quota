@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 import https from 'https'
 import cheerio from 'cheerio'
-import dotenv from 'dotenv'
-
-dotenv.config()
 
 const getPage = (pageUrl: string): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -27,19 +24,9 @@ const parseHtml = (html: string): Promise<string> =>
     resolve(result)
   })
 
-const getUrl = (): Promise<string> =>
-  new Promise((resolve, reject) => {
-    if (process.env.URL) {
-      resolve(process.env.URL)
-    } else {
-      reject(new Error('No URL set in variables'))
-    }
-  })
-
 const main = async () => {
   try {
-    const url = await getUrl()
-    const html = await getPage(url)
+    const html = await getPage('https://info.ku.ac.th')
     const data = await parseHtml(html)
     process.stdout.write(`${data}\n`)
   } catch (err) {
