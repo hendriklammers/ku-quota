@@ -14,11 +14,15 @@ type Cache = CacheData | null
 
 const getPage = (pageUrl: string): Promise<string> =>
   new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(Error('Timeout')), 5000)
     https
       .get(pageUrl, res => {
         let data = ''
         res.on('data', d => (data += d))
-        res.on('end', () => resolve(data))
+        res.on('end', () => {
+          clearTimeout(timeout)
+          resolve(data)
+        })
       })
       .on('error', reject)
   })
@@ -88,6 +92,7 @@ const main = async () => {
     }
   } catch (err) {
     console.error(err)
+    process.exit(1)
   }
 }
 
