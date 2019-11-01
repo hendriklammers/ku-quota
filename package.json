@@ -1,6 +1,6 @@
 {
   "name": "ku-quota",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Shows your remaining internet data for Kasetsart University network",
   "repository": "github:hendriklammers/ku-quota",
   "main": "dist/index.js",
