@@ -33,7 +33,8 @@
     "typescript": "^3.3.4000"
   },
   "bin": {
-    "ku-quota": "dist/index.js"
+    "ku-quota": "dist/index.js",
+    "kuquota": "dist/index.js"
   },
   "files": [
     "dist/**/*"
